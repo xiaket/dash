@@ -1,0 +1,22 @@
+name: Coverity Scan
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  coverity:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y automake autoconf libtool
+
+    - name: Generate Makefile
+      run: ./autogen.sh && ./configure
+
+    - uses: vapier/coverity-scan-action@v1.8.0
+      with:
+        email: ${{ secrets.COVERITY_SCAN_EMAIL }}
+        token: ${{ secrets.COVERITY_SCAN_TOKEN }}
