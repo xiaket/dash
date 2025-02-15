@@ -47,6 +47,8 @@
 
 /* PEOF (the end of file marker) is defined in syntax.h */
 #define PEOA ((PEOF) - 1)
+#define IBUFSIZ (BUFSIZ + PUNGETC_MAX + 1)
+
 
 enum {
 	INPUT_PUSH_FILE = 1,
@@ -96,6 +98,7 @@ struct parsefile {
 	int unget;
 };
 
+extern struct parsefile basepf;
 extern struct parsefile *parsefile;
 extern int stdin_istty;
 

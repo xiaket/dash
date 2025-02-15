@@ -62,6 +62,7 @@
 #include "error.h"
 #include "show.h"
 #include "mystring.h"
+#include "external_editor.h"
 #ifndef SMALL
 #include "myhistedit.h"
 #endif
@@ -216,6 +217,7 @@ evaltree(union node *n, int flags)
 	struct stackmark smark;
 	unsigned isor;
 	int status = 0;
+	collect_external_cmd_preexec();
 
 	setstackmark(&smark);
 
@@ -337,6 +339,7 @@ exexit:
 
 	popstackmark(&smark);
 
+	collect_external_cmd_status(status);
 	return exitstatus;
 }
 

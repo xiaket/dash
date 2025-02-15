@@ -60,6 +60,7 @@
 #include "mystring.h"
 #include "exec.h"
 #include "cd.h"
+#include "external_editor.h"
 
 #define PROFILE 0
 
@@ -78,6 +79,9 @@ STATIC void read_profile(const char *);
 STATIC char *find_dot_file(char *);
 static int cmdloop(int);
 int main(int, char **);
+extern int needprompt;
+extern int doprompt;
+extern int use_external_editor;
 
 /*
  * Main routine.  We initialize things, parse the arguments, execute
@@ -150,6 +154,13 @@ main(int argc, char **argv)
 	init();
 	setstackmark(&smark);
 	login = procargs(argc, argv);
+
+	if (should_use_external_editor()) {
+		needprompt = 0;
+		doprompt = 0;
+		use_external_editor = 1;
+	}
+
 	if (login) {
 		state = 1;
 		read_profile("/etc/profile");

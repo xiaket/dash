@@ -110,6 +110,7 @@ struct nodelist *backquotelist;
 union node *redirnode;
 struct heredoc *heredoc;
 int quoteflag;			/* set if (part of) last token was quoted */
+extern int use_external_editor;
 
 
 STATIC union node *list(int);
@@ -160,7 +161,8 @@ parsecmd(int interact)
 	tokpushback = 0;
 	checkkwd = 0;
 	heredoclist = 0;
-	doprompt = interact;
+	/* Don't show prompt if suppressed for external editor */
+	doprompt = use_external_editor ? 0 : interact;
 	if (doprompt)
 		setprompt(doprompt);
 	needprompt = 0;

@@ -46,6 +46,7 @@
 
 #include "alias.h"
 #include "error.h"
+#include "external_editor.h"
 #include "eval.h"
 #include "input.h"
 #include "main.h"
@@ -59,8 +60,6 @@
 #include "syntax.h"
 #include "system.h"
 #include "trap.h"
-
-#define IBUFSIZ (BUFSIZ + PUNGETC_MAX + 1)
 
 MKINIT
 struct stdin_state {
@@ -370,6 +369,21 @@ static int preadbuffer(void)
 		popstring();
 		return __pgetc();
 	}
+
+	if (use_external_editor) {
+		int result = run_external_editor();
+		if (result == EXTERNAL_EDITOR_EOF) {
+			goto eof;
+		}
+
+		if (result == EXTERNAL_EDITOR_ERROR) {
+			use_external_editor = 0;  // Disable external editor on error
+			// Fall through to built-in editor
+		} else {
+			return __pgetc();
+		}
+	}
+
 	if (parsefile->eof & 2) {
 eof:
 		parsefile->eof = 3;
